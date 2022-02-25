@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="rosbag_file_path"/>
+  <node pkg="rosbag" type="play" name="player" output="screen" args="-l $(arg rosbag_file_path)"/>
+</launch>

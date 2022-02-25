@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="rosbag_file_path" default="$(optenv ROSBAG_FILE_PATH)"/>
+  <include file="$(find rosbag_broadcaster)/launch/rosbag_broadcaster.launch">
+    <arg name="rosbag_file_path" value="$(arg rosbag_file_path)"/>
+  </include>
+</launch>

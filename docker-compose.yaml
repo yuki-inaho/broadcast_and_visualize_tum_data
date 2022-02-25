@@ -1,0 +1,43 @@
+version: "3.7"
+
+x-environment:
+  &common-environment
+  PYTHONUNBUFFERED: 1
+
+x-logging:
+  &default-logging
+  driver: "journald"
+  options:
+    tag: "{{.Name}}/{{.ID}}"
+
+services:
+  ros_master:
+    image: ros:noetic-ros-core
+    hostname: localhost
+    command: stdbuf -o L roscore
+    restart: always
+    network_mode: "host"
+    ports:
+      - "11311:11311"
+    logging: *default-logging
+
+  rosbag_broadcaster:
+    container_name: rosbag_broadcaster
+    build: ./rosbag_broadcaster
+    depends_on:
+      - ros_master
+    network_mode: "host"
+    restart: on-failure
+    env_file:
+      - .env
+    environment:
+      <<: *common-environment
+    privileged: yes
+    volumes:
+      - type: bind
+        source: ./data
+        target: /data
+        read_only: true
+      - "${pwd}/rosbag_browdcaster/launch:/root/catkin_ws/src/rosbag_broadcaster/launch"
+    logging: *default-logging
+    command: "/bin/bash -c 'while :; do sleep 1; done'"
